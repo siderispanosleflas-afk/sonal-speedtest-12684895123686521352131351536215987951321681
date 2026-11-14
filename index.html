@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internet Speed Test</title>
+<script>try{var s=localStorage.getItem("speedtheme");if(s)document.documentElement.dataset.theme=s}catch(e){}</script>
+<style>
+:root{color-scheme:light;--bg:#F1F2F4;--card:#fff;--line:#D8DBE0;--fg:#15171A;--muted:#5C636D;--accent:#D94E1F;--ok:#1B7F4B;--track:#E4E6EA;--th:#FAFAFB;--top:#15171A;
+--ease:cubic-bezier(.2,.7,.2,1);--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0F1114;--card:#171A1E;--line:#2B3037;--fg:#ECEDEF;--muted:#9AA1AB;--accent:#FF6A33;--ok:#4ADE80;--track:#2B3037;--th:#1C2025;--top:#0A0B0D}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0F1114;--card:#171A1E;--line:#2B3037;--fg:#ECEDEF;--muted:#9AA1AB;--accent:#FF6A33;--ok:#4ADE80;--track:#2B3037;--th:#1C2025;--top:#0A0B0D}
+body{transition:background .3s ease,color .3s ease}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.top{background:var(--top);color:#fff;border-bottom:1px solid var(--line)}
+.r{display:flex;align-items:center}
+.tg{background:none;border:1px solid #3A3F47;color:#C9CDD3;width:34px;height:34px;border-radius:6px;cursor:pointer;margin-left:16px;display:grid;place-items:center;transition:background 150ms ease,color 150ms ease}
+.tg:hover{background:#262A30;color:#fff}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;height:56px}
+.logo{font-weight:700;letter-spacing:-.01em;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo b{color:var(--accent)}
+nav a{color:#C9CDD3;text-decoration:none;margin-left:20px;font-size:14px}
+nav a:hover{color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1{font-size:26px;margin:28px 0 4px;letter-spacing:-.02em}
+h2{font-size:16px;margin:0;padding:14px 20px;border-bottom:1px solid var(--line)}
+.sub{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:20px;transition:background .3s ease,border-color .3s ease}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+.pad{padding:20px}
+.gwrap{position:relative;max-width:420px;margin:0 auto}
+.gwrap svg{width:100%;display:block}
+.gv{text-align:center;margin-top:2px}
+#arc{transition:filter .4s ease}
+.busy #arc{filter:drop-shadow(0 0 5px color-mix(in srgb,var(--accent) 55%,transparent))}
+#track{stroke:var(--track)}#arc{stroke:var(--accent)}#needle{stroke:var(--fg)}#hub{fill:var(--fg)}
+.gv b{display:block;font:600 52px/1 var(--mono);letter-spacing:-.04em}
+.gv span{font-size:13px;color:var(--muted)}
+.gt{fill:var(--muted);font:10px var(--mono);text-anchor:middle}
+.go{display:block;margin:16px auto 0;background:var(--accent);color:#fff;border:0;border-radius:8px;font:600 16px system-ui;padding:14px 56px;cursor:pointer;transition:filter 150ms ease,transform 150ms var(--ease),background .3s ease}
+.go:hover:not(:disabled){filter:brightness(.92)}.go:active:not(:disabled){transform:scale(.97)}.go:disabled{background:var(--muted);cursor:progress}
+.phases{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:20px 0 0}
+.ph{flex:1;text-align:center;padding:8px 4px;font-size:13px;color:var(--muted);border-right:1px solid var(--line);transition:background .3s ease,color .3s ease}
+.ph:last-child{border:0}.ph.on{background:var(--accent);color:#fff;animation:phpulse 1.4s ease-in-out infinite}@keyframes phpulse{50%{opacity:.78}}.ph.done{color:var(--ok)}
+.bar{height:4px;background:var(--line);margin-top:12px;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:0;border-radius:4px;background:var(--accent);transition:width .5s var(--ease)}
+.busy .bar i{background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent) 0 0/200% 100%,var(--accent);animation:sheen 1.2s linear infinite}@keyframes sheen{to{background-position:-200% 0}}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px;gap:12px}
+.meta .err{color:#B3261E}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.tile{padding:16px 20px;border-right:1px solid var(--line)}.tile:last-child{border:0}
+.tile small{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tile b{font:600 24px/1.3 var(--mono);letter-spacing:-.03em}.tile u{text-decoration:none;font-size:12px;color:var(--muted)}
+dl{margin:0}.row{display:flex;justify-content:space-between;gap:16px;padding:10px 20px;border-bottom:1px solid var(--line);font-size:14px}
+.row:last-child{border:0}.row dt{color:var(--muted)}.row dd{margin:0;text-align:right;font-family:var(--mono);font-size:13px;word-break:break-word}
+.two{display:grid;grid-template-columns:1fr 1fr}
+.two>div+div{border-left:1px solid var(--line)}
+canvas{display:block;width:100%;height:220px}
+#log{height:220px;overflow:auto;padding:12px 16px;font:12px/1.7 var(--mono);color:var(--muted);margin:0;list-style:none}
+#log li b{color:var(--fg);font-weight:500}
+#log li{animation:slide .3s var(--ease)}@keyframes slide{from{opacity:0;transform:translateX(-6px)}}
+.pop{animation:pop .45s var(--ease)}@keyframes pop{from{transform:scale(1.12);color:var(--accent)}}
+.tile b{display:inline-block}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+main>*{animation:up .6s var(--ease) both}
+details summary{transition:color 150ms ease}details summary:hover{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 20px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--th);font-weight:600}
+td.n{font-family:var(--mono);font-size:13px}
+.tw{overflow-x:auto}
+.scores{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.chip{border:1px solid var(--line);padding:4px 10px;font-size:13px}.chip b{text-transform:capitalize}
+.hd{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.hd h2{border:0}
+.btn{font:500 13px system-ui;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 12px;margin-right:12px;cursor:pointer;transition:background 150ms ease}
+.btn:hover{background:var(--bg)}
+.empty{padding:16px 20px;color:var(--muted);margin:0}
+details{border-bottom:1px solid var(--line);padding:12px 20px}details:last-child{border:0}
+summary{cursor:pointer;font-weight:600}details p{margin:8px 0 0;color:var(--muted);max-width:75ch}
+footer{color:var(--muted);font-size:13px;padding:8px 0 40px}
+@media (max-width:860px){.layout,.two{grid-template-columns:1fr}.two>div+div{border-left:0;border-top:1px solid var(--line)}.tiles{grid-template-columns:1fr 1fr}.tile:nth-child(2){border-right:0}.tile:nth-child(-n+2){border-bottom:1px solid var(--line)}.nav{display:none}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><a class="logo" href="#">Speed<b>Test</b></a><div class="r"><nav class="nav"><a href="#test">Test</a><a href="#results">Results</a><a href="#history">History</a><a href="#faq">FAQ</a></nav><button class="tg" id="theme" type="button" aria-label="Toggle dark mode"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg></button></div></div></div>
+<main class="wrap">
+<h1>Internet speed test</h1>
+<p class="sub">Measures download and upload speed, latency, jitter, latency under load and packet loss from your browser.</p>
+
+<div class="layout" id="test">
+<section class="card">
+<div class="pad">
+<div class="gwrap">
+<svg viewBox="-14 6 348 176" id="gauge" aria-hidden="true"><path id="track" d="M30 160A130 130 0 0 1 290 160" fill="none" stroke-width="12" stroke-linecap="round"/><path id="arc" d="M30 160A130 130 0 0 1 290 160" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 500"/><g id="ticks"></g><line id="needle" x1="160" y1="160" x2="160" y2="66" stroke-width="3" stroke-linecap="round"/><circle id="hub" cx="160" cy="160" r="7"/></svg>
+<div class="gv"><b id="big" aria-live="polite">0.00</b><span id="bigLabel">Mbps</span></div>
+</div>
+<button class="go" id="go" type="button">Start test</button>
+<div class="phases"><div class="ph" data-p="latency">Latency</div><div class="ph" data-p="download">Download</div><div class="ph" data-p="upload">Upload</div><div class="ph" data-p="packetLoss">Packet loss</div></div>
+<div class="bar"><i id="prog"></i></div>
+<div class="meta"><span id="status" role="status">Ready.</span><span id="timer">0.0 s</span></div>
+</div>
+<div class="tiles">
+<div class="tile"><small>Download</small><b id="tDl">—</b> <u>Mbps</u></div>
+<div class="tile"><small>Upload</small><b id="tUl">—</b> <u>Mbps</u></div>
+<div class="tile"><small>Latency</small><b id="tLat">—</b> <u>ms</u></div>
+<div class="tile"><small>Jitter</small><b id="tJit">—</b> <u>ms</u></div>
+</div>
+</section>
+
+<aside class="card">
+<h2>Your connection</h2>
+<dl>
+<div class="row"><dt>IP address</dt><dd id="cIp">—</dd></div>
+<div class="row"><dt>Provider</dt><dd id="cIsp">—</dd></div>
+<div class="row"><dt>Location</dt><dd id="cLoc">—</dd></div>
+<div class="row"><dt>Test server</dt><dd id="cSrv">—</dd></div>
+<div class="row"><dt>Protocol</dt><dd id="cProto">—</dd></div>
+<div class="row"><dt>Connection type</dt><dd id="cType">—</dd></div>
+<div class="row"><dt>Browser estimate</dt><dd id="cEst">—</dd></div>
+<div class="row"><dt>Time zone</dt><dd id="cTz">—</dd></div>
+</dl>
+</aside>
+</div>
+
+<section class="card two">
+<div><h2>Speed over time</h2><canvas id="graph" aria-label="Measured speed over time"></canvas></div>
+<div><h2>Test log</h2><ul id="log"><li>Waiting to start.</li></ul></div>
+</section>
+
+<section class="card" id="results">
+<div class="hd"><h2>Detailed results</h2><span><button class="btn" id="copy" type="button">Copy</button></span></div>
+<div class="scores" id="scores" hidden></div>
+<div class="tw" id="detail"><p class="empty">Run a test to see the full breakdown.</p></div>
+</section>
+
+<section class="card" id="samples">
+<h2>Samples by file size</h2>
+<div class="tw" id="sampleTbl"><p class="empty">Individual download and upload requests appear here after a test.</p></div>
+</section>
+
+<section class="card" id="history">
+<div class="hd"><h2>History</h2><span><button class="btn" id="csv" type="button">Export CSV</button><button class="btn" id="clear" type="button">Clear</button></span></div>
+<div class="tw" id="hist"></div>
+</section>
+
+<section class="card" id="faq">
+<h2>Questions</h2>
+<details><summary>What does each number mean?</summary><p>Download and upload are how much data moves per second, in megabits (Mbps). Latency is the round-trip time of a small request. Jitter is how much latency varies. Latency under load shows how much your connection slows down while it is busy, which affects calls and games.</p></details>
+<details><summary>Why is my result lower than my plan?</summary><p>Wi-Fi, other devices on the network, a distant test server and a busy router all lower the result. Use a cable, close other apps, and run the test more than once.</p></details>
+<details><summary>Where is the data sent?</summary><p>Test traffic goes to Cloudflare’s speed test servers. Cloudflare’s engine also reports aggregate results to Cloudflare when a test completes. Your history stays in this browser.</p></details>
+<details><summary>How much data does a test use?</summary><p>A full test can use several hundred megabytes on a fast connection. The detailed results show the amount used by your last run.</p></details>
+</section>
+</main>
+<footer class="wrap">Measurement engine: @cloudflare/speedtest, run against speed.cloudflare.com.</footer>
+
+<script type="module">
+const $=id=>document.getElementById(id);
+const V=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const LIB="https://cdn.jsdelivr.net/npm/@cloudflare/speedtest@1/+esm";
+let ST=null,engine=null,running=false,finished=false,events=0,t0=0,tick=null,watchdog=null;
+let samples=[],last={},history=[];
+let target=0,shown=0;
+try{history=JSON.parse(localStorage.getItem("speedhistory")||"[]")}catch(e){history=[]}
+const num=v=>typeof v==="number"&&isFinite(v)?v:null;
+const mb=v=>v==null?"—":(v/1e6).toFixed(v/1e6<10?2:1);
+const ms=v=>v==null?"—":v.toFixed(v<10?1:0);
+const bytes=n=>n>=1e6?(n/1e6)+" MB":(n/1e3)+" kB";
+const pc=v=>v==null?"—":(v*100).toFixed(2)+" %";
+const g=(fn)=>{try{return num(fn())}catch(e){return null}};
+const say=(t,err)=>{const s=$("status");s.textContent=t;s.className=err?"err":""};
+const log=(h)=>{const l=$("log");if(l.firstChild&&l.firstChild.dataset&&l.firstChild.dataset.idle)l.innerHTML="";const li=document.createElement("li");li.innerHTML="<b>"+((performance.now()-t0)/1000).toFixed(1)+"s</b>  "+h;l.appendChild(li);l.scrollTop=l.scrollHeight};
+
+/* gauge */
+const R=130,CX=160,CY=160,pos=v=>Math.min(1,Math.log10(1+v)/3);
+$("ticks").innerHTML=[0,5,10,25,50,100,250,500,1000].map(v=>{const a=Math.PI*(1-pos(v));return `<text class="gt" x="${CX+(R+20)*Math.cos(a)}" y="${CY-(R+20)*Math.sin(a)+3}">${v}</text>`}).join("");
+(function frame(){
+  shown+=(target-shown)*.12;if(Math.abs(target-shown)<.005)shown=target;
+  const p=pos(shown);
+  $("arc").setAttribute("stroke-dasharray",(p*Math.PI*R)+" 500");
+  $("needle").setAttribute("transform","rotate("+(-90+p*180)+" 160 160)");
+  $("big").textContent=shown.toFixed(shown<10?2:1);
+  requestAnimationFrame(frame);
+})();
+
+/* connection info */
+$("cTz").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone||"—";
+const nc=navigator.connection;
+$("cType").textContent=nc&&nc.effectiveType?nc.effectiveType+(nc.type?" / "+nc.type:""):"Not reported";
+$("cEst").textContent=nc&&nc.downlink?nc.downlink+" Mbps down, "+(nc.rtt||"?")+" ms rtt":"Not reported";
+(async()=>{
+  const set=(k,v)=>{$(k).textContent=v||"—"};let ok=false;
+  try{
+    const t=await (await fetch("https://www.cloudflare.com/cdn-cgi/trace",{cache:"no-store"})).text();
+    const m=Object.fromEntries(t.trim().split("\n").map(l=>l.split("=")));
+    set("cIp",m.ip);set("cSrv",m.colo?"Cloudflare "+m.colo:"");set("cProto",(m.http||"")+(m.tls?" / "+m.tls:""));set("cLoc",m.loc);ok=!!m.ip;
+  }catch(e){}
+  try{
+    const j=await (await fetch("https://ipwho.is/")).json();
+    if(j&&j.success!==false){const c=j.connection||{};set("cIp",j.ip);set("cIsp",c.isp?c.isp+(c.asn?" (AS"+c.asn+")":""):"");set("cLoc",[j.city,j.region,j.country].filter(Boolean).join(", "));ok=true}
+  }catch(e){}
+  if(!ok)$("cIp").textContent="Unavailable";
+})();
+
+/* graph */
+function draw(){
+  const cv=$("graph"),r=cv.getBoundingClientRect();if(!r.width)return;
+  const d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;
+  const c=cv.getContext("2d");c.scale(d,d);const w=r.width,h=r.height,pl=44,pb=22,pt=8,pr=10;
+  const maxT=Math.max(10,samples.length?samples[samples.length-1].t*1.05:10);
+  const maxV=Math.max(10,...samples.map(s=>s.v))*1.15;
+  c.font="11px ui-monospace,monospace";c.fillStyle=V("--muted");c.strokeStyle=V("--line");c.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pt+(h-pt-pb)*i/4;c.beginPath();c.moveTo(pl,y+.5);c.lineTo(w-pr,y+.5);c.stroke();c.textAlign="right";c.fillText((maxV*(1-i/4)).toFixed(0),pl-6,y+4)}
+  c.textAlign="center";for(let i=0;i<=4;i++)c.fillText((maxT*i/4).toFixed(0)+"s",pl+(w-pl-pr)*i/4,h-6);
+  [["download",V("--accent")],["upload",V("--fg")]].forEach(([k,col])=>{
+    const p=samples.filter(s=>s.k===k);if(!p.length)return;
+    c.beginPath();c.strokeStyle=col;c.lineWidth=2;
+    p.forEach((s,i)=>{const x=pl+s.t/maxT*(w-pl-pr),y=pt+(h-pt-pb)*(1-s.v/maxV);i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();
+    c.fillStyle=col;c.textAlign="left";c.fillText(k==="download"?"Download":"Upload",pl+(k==="download"?8:80),pt+12);
+  });
+}
+addEventListener("resize",draw);
+
+/* tables */
+const row=(a,b)=>"<tr><td>"+a+"</td><td class=n>"+b+"</td></tr>";
+function renderHist(){
+  const h=$("hist");
+  if(!history.length){h.innerHTML='<p class="empty">No tests yet.</p>';return}
+  h.innerHTML="<table><thead><tr><th>Time</th><th>Download</th><th>Upload</th><th>Latency</th><th>Jitter</th><th>Loss</th></tr></thead><tbody>"+history.map(x=>"<tr><td>"+x.when+"</td><td class=n>"+mb(x.dl)+" Mbps</td><td class=n>"+mb(x.ul)+" Mbps</td><td class=n>"+ms(x.lat)+" ms</td><td class=n>"+ms(x.jit)+" ms</td><td class=n>"+pc(x.loss)+"</td></tr>").join("")+"</tbody></table>";
+}
+function renderDetail(r){
+  const dl=g(()=>r.getDownloadBandwidth()),ul=g(()=>r.getUploadBandwidth()),lat=g(()=>r.getUnloadedLatency()),jit=g(()=>r.getUnloadedJitter()),
+  dll=g(()=>r.getDownLoadedLatency()),dlj=g(()=>r.getDownLoadedJitter()),ull=g(()=>r.getUpLoadedLatency()),ulj=g(()=>r.getUpLoadedJitter()),loss=g(()=>r.getPacketLoss());
+  const dp=(()=>{try{return r.getDownloadBandwidthPoints()||[]}catch(e){return[]}})(),up=(()=>{try{return r.getUploadBandwidthPoints()||[]}catch(e){return[]}})();
+  const used=[...dp,...up].reduce((a,p)=>a+(p.transferSize||p.bytes||0),0);
+  last={dl,ul,lat,jit,dll,dlj,ull,ulj,loss,used};
+  $("detail").innerHTML="<table><thead><tr><th>Measurement</th><th>Result</th></tr></thead><tbody>"+
+   row("Download speed",mb(dl)+" Mbps")+row("Upload speed",mb(ul)+" Mbps")+row("Idle latency",ms(lat)+" ms")+row("Idle jitter",ms(jit)+" ms")+
+   row("Latency while downloading",ms(dll)+" ms"+(dll!=null&&lat!=null?" (+"+ms(dll-lat)+")":""))+row("Jitter while downloading",ms(dlj)+" ms")+
+   row("Latency while uploading",ms(ull)+" ms"+(ull!=null&&lat!=null?" (+"+ms(ull-lat)+")":""))+row("Jitter while uploading",ms(ulj)+" ms")+
+   row("Packet loss",pc(loss))+row("Data used",used?(used/1e6).toFixed(1)+" MB":"—")+row("Test duration",((performance.now()-t0)/1000).toFixed(1)+" s")+"</tbody></table>";
+  const sc=$("scores");let s=null;try{s=typeof r.getScores==="function"?r.getScores():null}catch(e){}
+  if(s&&typeof s==="object"){sc.hidden=false;sc.innerHTML=Object.keys(s).map(k=>'<span class="chip">'+k+": <b>"+((s[k]&&s[k].classificationName)||"n/a")+"</b></span>").join("")}else sc.hidden=true;
+  const pts=[...dp.map(p=>["Download",p]),...up.map(p=>["Upload",p])];
+  $("sampleTbl").innerHTML=pts.length?"<table><thead><tr><th>Type</th><th>File size</th><th>Speed</th><th>Duration</th></tr></thead><tbody>"+pts.map(([k,p])=>"<tr><td>"+k+"</td><td class=n>"+(p.bytes?bytes(p.bytes):"—")+"</td><td class=n>"+mb(p.bps)+" Mbps</td><td class=n>"+(p.duration!=null?p.duration.toFixed(0)+" ms":"—")+"</td></tr>").join("")+"</tbody></table>":'<p class="empty">No samples were returned.</p>';
+}
+const save=()=>{try{localStorage.setItem("speedhistory",JSON.stringify(history))}catch(e){}};
+
+/* test flow */
+function phase(t){document.querySelectorAll(".ph").forEach(p=>{p.classList.toggle("on",p.dataset.p===t);if(finished)p.className="ph done"})}
+function onEvent(type){
+  events++;clearTimeout(watchdog);
+  const r=engine.results;let msg=type;
+  $("prog").style.width=Math.min(96,100*(1-Math.exp(-events/40)))+"%";
+  phase(type);
+  if(type==="latency"){const l=g(()=>r.getUnloadedLatency()),j=g(()=>r.getUnloadedJitter());$("tLat").textContent=ms(l);$("tJit").textContent=ms(j);msg="Latency <b>"+ms(l)+" ms</b>, jitter "+ms(j)+" ms";say("Measuring latency.");$("bigLabel").textContent="Mbps"}
+  else if(type==="download"||type==="upload"){
+    const pts=(()=>{try{return(type==="download"?r.getDownloadBandwidthPoints():r.getUploadBandwidthPoints())||[]}catch(e){return[]}})();
+    const p=pts[pts.length-1],red=g(()=>type==="download"?r.getDownloadBandwidth():r.getUploadBandwidth());
+    const v=(red!=null?red:(p&&p.bps))||0;target=v/1e6;
+    $(type==="download"?"tDl":"tUl").textContent=mb(v);
+    if(p&&p.bps)samples.push({t:(performance.now()-t0)/1000,k:type,v:p.bps/1e6});
+    msg=(type==="download"?"Download":"Upload")+(p&&p.bytes?" "+bytes(p.bytes):"")+": <b>"+(p?mb(p.bps):"—")+" Mbps</b>";
+    say(type==="download"?"Measuring download.":"Measuring upload.");$("bigLabel").textContent="Mbps "+type;draw();
+  }else if(type==="packetLoss"){const l=g(()=>r.getPacketLoss());msg="Packet loss <b>"+pc(l)+"</b>";say("Measuring packet loss.")}
+  log(msg);
+}
+async function start(){
+  if(running)return;
+  running=true;finished=false;events=0;samples=[];target=0;t0=performance.now();draw();
+  $("go").disabled=true;$("go").textContent="Testing";document.body.classList.add("busy");$("prog").style.width="2%";
+  ["tDl","tUl","tLat","tJit"].forEach(i=>$(i).textContent="—");$("log").innerHTML="";
+  document.querySelectorAll(".ph").forEach(p=>p.className="ph");
+  clearInterval(tick);tick=setInterval(()=>$("timer").textContent=((performance.now()-t0)/1000).toFixed(1)+" s",100);
+  say("Loading the measurement engine.");
+  try{
+    if(!ST){const m=await import(LIB);ST=m.default||m.SpeedTest||m}
+    engine=new ST({autoStart:false});
+    engine.onResultsChange=({type})=>onEvent(type);
+    engine.onError=e=>{log("Error: "+String(e));};
+    engine.onFinish=finish;
+    say("Starting.");log("Engine loaded, starting measurements.");
+    watchdog=setTimeout(()=>fail("No response from speed.cloudflare.com after 20 seconds. A content blocker, firewall or VPN may be blocking it."),20000);
+    engine.play();
+  }catch(e){fail("Could not load the measurement engine from cdn.jsdelivr.net ("+(e&&e.message||e)+").")}
+}
+function fail(m){
+  clearTimeout(watchdog);clearInterval(tick);try{engine&&engine.pause()}catch(e){}
+  running=false;document.body.classList.remove("busy");$("go").disabled=false;$("go").textContent="Try again";say(m,true);$("prog").style.width="0";log("Stopped: "+m);
+}
+function finish(r){
+  clearTimeout(watchdog);clearInterval(tick);finished=true;running=false;
+  document.body.classList.remove("busy");$("go").disabled=false;$("go").textContent="Run again";$("prog").style.width="100%";phase("");
+  renderDetail(r);
+  target=(last.dl||0)/1e6;$("bigLabel").textContent="Mbps download";
+  $("tDl").textContent=mb(last.dl);$("tUl").textContent=mb(last.ul);$("tLat").textContent=ms(last.lat);$("tJit").textContent=ms(last.jit);
+  $("timer").textContent=((performance.now()-t0)/1000).toFixed(1)+" s";say("Finished.");log("Finished.");
+  const d=new Date();history.unshift({when:d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}),dl:last.dl,ul:last.ul,lat:last.lat,jit:last.jit,loss:last.loss});
+  history=history.slice(0,25);save();renderHist();
+}
+document.querySelectorAll("main>*").forEach((el,i)=>el.style.animationDelay=i*70+"ms");
+const mo=new MutationObserver(l=>l.forEach(m=>{const el=m.target.nodeType===3?m.target.parentNode:m.target;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop")}));
+["tDl","tUl","tLat","tJit"].forEach(id=>mo.observe($(id),{childList:true,characterData:true,subtree:true}));
+const isDark=()=>document.documentElement.dataset.theme?document.documentElement.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+$("theme").onclick=()=>{const t=isDark()?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("speedtheme",t)}catch(e){}draw()};
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change",draw);
+$("go").onclick=start;
+$("clear").onclick=()=>{history=[];save();renderHist()};
+$("csv").onclick=()=>{
+  const rows=[["time","download_mbps","upload_mbps","latency_ms","jitter_ms","packet_loss"]].concat(history.map(x=>[x.when,mb(x.dl),mb(x.ul),ms(x.lat),ms(x.jit),x.loss==null?"":x.loss]));
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(",")).join("\n")],{type:"text/csv"}));a.download="speedtest-history.csv";a.click();
+};
+$("copy").onclick=()=>{
+  if(last.dl==null&&last.ul==null)return;
+  const t="Download "+mb(last.dl)+" Mbps, upload "+mb(last.ul)+" Mbps, latency "+ms(last.lat)+" ms, jitter "+ms(last.jit)+" ms, packet loss "+pc(last.loss);
+  navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{$("copy").textContent="Copied";setTimeout(()=>$("copy").textContent="Copy",1500)});
+};
+$("log").innerHTML='<li data-idle="1">Waiting to start.</li>';
+renderHist();draw();
+</script>
+</body>
+</html>
